@@ -1,4 +1,3 @@
-import {LoaderSuspense} from '@/components/LoaderSuspense';
 import {
     AuthUser,
     getUser,
@@ -10,6 +9,7 @@ import {
 } from '@/features/auth';
 import storage from '@/utils/storage';
 import {initReactQueryAuth} from 'react-query-auth';
+import {Spinner} from "@/components/Elements/Spinner";
 
 async function handleUserResponse(data: UserResponse) {
     const {user} = data;
@@ -48,7 +48,7 @@ const authConfig = {
     registerFn,
     logoutFn,
     LoaderComponent() {
-        return <LoaderSuspense/>;
+        return <Spinner/>;
     },
 };
 

@@ -12,7 +12,7 @@ const {Users} = lazyImport({factory: () => import('@/features/users'), name: 'Us
 const App = () => {
     return (<></>
         // <MainLayout title="">
-        //     <Suspense fallback={<LoaderSuspense/>}>
+        //     <Suspense fallback={<Spinner/>}>
         //         <Outlet/>
         //     </Suspense>
         // </MainLayout>
