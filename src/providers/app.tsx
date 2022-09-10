@@ -1,26 +1,25 @@
-import LoaderSuspense from '@/components/LoaderSuspense';
 import {AuthProvider} from '@/lib/auth';
 import {queryClient} from '@/lib/react-query';
-import {AlertTitle, Button, Stack} from '@mui/material';
-import Alert from '@mui/material/Alert';
 import * as React from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
 import {HelmetProvider} from 'react-helmet-async';
 import {QueryClientProvider} from 'react-query';
 import {ReactQueryDevtools} from 'react-query/devtools';
 import {BrowserRouter as Router} from 'react-router-dom';
+import {Button} from "@/components/Elements/Button";
+import {Spinner} from "@/components/Elements/Spinner";
 
 const ErrorFallback = () => {
     return (
-        <Stack sx={{width: '100%'}} spacing={2}>
-            <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                Ooops, something went wrong :(
-                <Button className="mt-4" onClick={() => window.location.assign(window.location.origin)}>
-                    Refresh
-                </Button>
-            </Alert>
-        </Stack>
+        <div
+            className="text-red-500 w-screen h-screen flex flex-col justify-center items-center"
+            role="alert"
+        >
+            <h2 className="text-lg font-semibold">Ooops, something went wrong :( </h2>
+            <Button className="mt-4" onClick={() => window.location.assign(window.location.origin)}>
+                Refresh
+            </Button>
+        </div>
     );
 };
 
@@ -30,7 +29,7 @@ type AppProviderProps = {
 
 export const AppProvider = ({children}: AppProviderProps) => {
     return (
-        <React.Suspense fallback={<LoaderSuspense/>}>
+        <React.Suspense fallback={<Spinner/>}>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <HelmetProvider>
                     <QueryClientProvider client={queryClient}>
