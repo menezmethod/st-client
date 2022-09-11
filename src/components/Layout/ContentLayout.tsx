@@ -1,9 +1,17 @@
-import React from 'react';
+import * as React from 'react';
 
-export const ContentLayout = () => {
+import {Head} from '../Head';
+
+type ContentLayoutProps = {
+    children: React.ReactNode;
+    title: string;
+};
+
+export const ContentLayout = ({children, title}: ContentLayoutProps) => {
     return (
-        <div>
-
-        </div>
+        <>
+            <Head title={title}/>
+            <div>{children}</div>
+        </>
     );
 };

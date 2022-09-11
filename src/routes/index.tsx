@@ -15,7 +15,8 @@ export const AppRoutes = () => {
         {path: '/', element: <LoginForm onSuccess={() => navigate('/')}/>},
     ];
 
-    const routes = auth.user ? protectedRoutes : publicRoutes;
+    // const routes = auth.user ? protectedRoutes : publicRoutes;
+    const routes = protectedRoutes;
 
     const element = useRoutes([...routes, ...commonRoutes]);
 
