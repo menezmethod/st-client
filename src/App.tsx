@@ -1,19 +1,10 @@
-import React from 'react';
-import {RegisterForm} from "./features/auth/components/RegisterForm";
-import {LoginForm} from "./features/auth/components/LoginForm";
+import {AppProvider} from "@/providers/app";
+import {AppRoutes} from "@/routes";
 
-function App() {
-    document.body.style.backgroundColor = "#f4f5f7";
-    document.body.style.margin = "0";
-    // const navigate = useNavigate();
-
+export default function App() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <LoginForm onSuccess={() => ('/')}/>
-            </header>
-        </div>
+        <AppProvider>
+            <AppRoutes/>
+        </AppProvider>
     );
 }
-
-export default App;
