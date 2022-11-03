@@ -1,46 +1,52 @@
-import {axios} from '@/lib/axios';
-import {MutationConfig, queryClient} from '@/lib/react-query';
-import {setSnackbar} from '@/redux/models/snackbar';
-import createStore from '@/redux/createStore'
-import {useMutation} from 'react-query';
-import {User} from '../types';
+import { useMutation } from 'react-query';
+
+import { axios } from '@/lib/axios';
+import { MutationConfig, queryClient } from '@/lib/react-query';
+import { useNotificationStore } from '@/stores/notifications';
+
+import { User } from '../types';
 
 export type DeleteUserDTO = {
-    userId: string;
+  userId: string;
 };
 
-export const deleteUser = ({userId}: DeleteUserDTO) => {
-    return axios.delete(`/users/${userId}`);
+export const deleteUser = ({ userId }: DeleteUserDTO) => {
+  return axios.delete(`/users/${userId}`);
 };
 
 type UseDeleteUserOptions = {
-    config?: MutationConfig<typeof deleteUser>;
+  config?: MutationConfig<typeof deleteUser>;
 };
 
-export const useDeleteUser = ({config}: UseDeleteUserOptions = {}) => {
-    return useMutation({
-        onMutate: async (deletedUser) => {
-            await queryClient.cancelQueries('users');
+export const useDeleteUser = ({ config }: UseDeleteUserOptions = {}) => {
+  const { addNotification } = useNotificationStore();
 
-            const previousUsers = queryClient.getQueryData<User[]>('users');
+  return useMutation({
+    onMutate: async (deletedUser) => {
+      await queryClient.cancelQueries('users');
 
-            queryClient.setQueryData(
-                'users',
-                previousUsers?.filter((user) => user.id !== deletedUser.userId)
-            );
+      const previousUsers = queryClient.getQueryData<User[]>('users');
 
-            return {previousUsers};
-        },
-        onError: (_, __, context: any) => {
-            if (context?.previousUsers) {
-                queryClient.setQueryData('users', context.previousUsers);
-            }
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries('users');
-            createStore.dispatch(setSnackbar(true, 'success', 'User Deleted'));
-        },
-        ...config,
-        mutationFn: deleteUser,
-    });
+      queryClient.setQueryData(
+        'users',
+        previousUsers?.filter((user) => user.id !== deletedUser.userId)
+      );
+
+      return { previousUsers };
+    },
+    onError: (_, __, context: any) => {
+      if (context?.previousUsers) {
+        queryClient.setQueryData('users', context.previousUsers);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries('users');
+      addNotification({
+        type: 'success',
+        title: 'User Deleted',
+      });
+    },
+    ...config,
+    mutationFn: deleteUser,
+  });
 };

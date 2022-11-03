@@ -1,10 +1,6 @@
-import {BaseEntity} from '@/types';
+import { BaseEntity } from '@/types';
 
 export type Journal = {
-    createdAt: Date
-    createdBy: string;
-    description: string;
-    endDate: Date;
-    name: any;
-    startDate: Date;
+  title: string;
+  body: string;
 } & BaseEntity;
