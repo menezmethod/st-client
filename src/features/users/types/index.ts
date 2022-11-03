@@ -1,10 +1,9 @@
-import {BaseEntity} from '@/types';
+import { BaseEntity } from '@/types';
 
 export type User = {
-    id?: number;
-    fullName?: string;
-    email?: string;
-    role?: 'ADMIN' | 'USER';
-    password?: string;
-    timeRegistered?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: 'ADMIN' | 'USER';
+  bio: string;
 } & BaseEntity;
