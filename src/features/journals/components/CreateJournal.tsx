@@ -6,7 +6,6 @@ import { Form, FormDrawer, InputField, TextAreaField } from '@/components/Form';
 import { Authorization, ROLES } from '@/lib/authorization';
 
 import { CreateJournalDTO, useCreateJournal } from '../api/createJournal';
-import clsx from 'clsx';
 import { DatePicker } from '@/components/Form/DatePicker';
 import { useAuth } from '@/lib/auth';
 import { Hidden } from '@/components/Form/Hidden';

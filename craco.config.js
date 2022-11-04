@@ -5,7 +5,7 @@ module.exports = {
       '@': path.resolve(__dirname, 'src'),
     },
     devServer: {
-      proxy: 'http://1.1.1.1:8080',
+      proxy: 'http://1.1.1.1:5000',
     },
   },
   style: {
