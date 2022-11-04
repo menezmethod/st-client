@@ -8,14 +8,16 @@ import { Journal } from '../types';
 
 export type UpdateJournalDTO = {
   data: {
-    title: string;
-    body: string;
+    name: string;
+    description: string;
+    endDate: Date;
+    startDate: Date;
   };
   journalId: string;
 };
 
 export const updateJournal = ({ data, journalId }: UpdateJournalDTO): Promise<Journal> => {
-  return axios.patch(`/journals/${journalId}`, data);
+  return axios.patch(`/journal/${journalId}`, data);
 };
 
 type UseUpdateJournalOptions = {

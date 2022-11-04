@@ -2,15 +2,15 @@ import { TrashIcon } from '@heroicons/react/outline';
 
 import { Button, ConfirmationDialog } from '@/components/Elements';
 
-import { useDeleteComment } from '../api/deleteComment';
+import { useDeleteTrade } from '../api/deleteTrade';
 
 type DeleteCommentProps = {
   id: string;
-  discussionId: string;
+  journalId: string;
 };
 
-export const DeleteComment = ({ id, discussionId }: DeleteCommentProps) => {
-  const deleteCommentMutation = useDeleteComment({ discussionId });
+export const DeleteTrade = ({ id, journalId }: DeleteCommentProps) => {
+  const deleteCommentMutation = useDeleteTrade({ journalId: journalId });
 
   return (
     <ConfirmationDialog

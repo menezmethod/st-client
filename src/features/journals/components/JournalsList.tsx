@@ -1,6 +1,6 @@
 import { Link, Spinner, Table } from '@/components/Elements';
 import { Journal } from '@/features/journals';
-import { formatDate } from '@/utils/format';
+import { formatDate, formatDateShort } from '@/utils/format';
 
 import { useJournals } from '../api/getJournals';
 
@@ -24,21 +24,35 @@ export const JournalsList = () => {
       data={journalsQuery.data}
       columns={[
         {
-          title: 'Title',
-          field: 'title',
-        },
-        {
-          title: 'Created At',
-          field: 'createdAt',
-          Cell({ entry: { createdAt } }) {
-            return <span>{formatDate(createdAt)}</span>;
+          title: 'Name',
+          field: 'name',
+          Cell({ entry: { name, id } }) {
+            return (
+              <span>
+                <Link to={`./${id}`}>{name}</Link>
+              </span>
+            );
           },
         },
         {
-          title: '',
-          field: 'id',
-          Cell({ entry: { id } }) {
-            return <Link to={`./${id}`}>View</Link>;
+          title: 'Description',
+          field: 'description',
+          Cell({ entry: { description } }) {
+            return <span>{description}</span>;
+          },
+        },
+        {
+          title: 'Start Date',
+          field: 'startDate',
+          Cell({ entry: { startDate } }) {
+            return <span>{formatDateShort(startDate)}</span>;
+          },
+        },
+        {
+          title: 'End Date',
+          field: 'endDate',
+          Cell({ entry: { endDate } }) {
+            return <span>{formatDateShort(endDate)}</span>;
           },
         },
         {

@@ -6,13 +6,21 @@ import { Form, FormDrawer, InputField, TextAreaField } from '@/components/Form';
 import { Authorization, ROLES } from '@/lib/authorization';
 
 import { CreateJournalDTO, useCreateJournal } from '../api/createJournal';
+import clsx from 'clsx';
+import { DatePicker } from '@/components/Form/DatePicker';
+import { useAuth } from '@/lib/auth';
+import { Hidden } from '@/components/Form/Hidden';
 
 const schema = z.object({
-  title: z.string().min(1, 'Required'),
-  body: z.string().min(1, 'Required'),
+  name: z.string().min(1, 'Required'),
+  description: z.string().min(1, 'Required'),
+  startDate: z.string(),
+  endDate: z.string(),
+  createdBy: z.string(),
 });
 
 export const CreateJournal = () => {
+  const { user } = useAuth();
   const createJournalMutation = useCreateJournal();
 
   return (
@@ -46,16 +54,34 @@ export const CreateJournal = () => {
           {({ register, formState }) => (
             <>
               <InputField
-                label="Title"
-                error={formState.errors['title']}
-                registration={register('title')}
+                label="Name"
+                error={formState.errors['name']}
+                registration={register('name')}
               />
 
               <TextAreaField
-                label="Body"
-                error={formState.errors['body']}
-                registration={register('body')}
+                label="Description"
+                error={formState.errors['description']}
+                registration={register('description')}
               />
+              <div>
+                <div>
+                  <DatePicker
+                    label="Start Date"
+                    error={formState.errors['startDate']}
+                    registration={register('startDate')}
+                  />
+                </div>
+                <br />
+                <div>
+                  <DatePicker
+                    label="End Date"
+                    error={formState.errors['endDate']}
+                    registration={register('endDate')}
+                  />
+                </div>
+                <Hidden value={user?.email} registration={register('createdBy')} />
+              </div>
             </>
           )}
         </Form>
