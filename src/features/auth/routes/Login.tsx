@@ -1,15 +1,19 @@
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import {Head} from '@/components/Head';
-import {LoginForm} from "@/features/auth/components/LoginForm";
+import { queryClient } from '@/lib/react-query';
+
+import { Layout } from '../components/Layout';
+import { LoginForm } from '../components/LoginForm';
 
 export const Login = () => {
-    const navigate = useNavigate();
-
-    return (
-        <>
-            <Head title="Sign in"/>
-            <LoginForm onSuccess={() => navigate('/')}/>
-        </>
-    );
+  const navigate = useNavigate();
+  const loggedIn = async () => {
+    await queryClient.refetchQueries();
+    navigate('/app');
+  };
+  return (
+    <Layout title="Log in to your account">
+      <LoginForm onSuccess={loggedIn} />
+    </Layout>
+  );
 };

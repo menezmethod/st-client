@@ -1,23 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+
 import './index.css';
-import WebFont from "webfontloader";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { initMocks } from './test/server';
 
-WebFont.load({
-    google: {
-        families: ["Poppins", "Inter:600,400,500"],
-    },
-});
+initMocks();
 
-const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement
-);
-root.render(
-    <React.StrictMode>
-        <App/>
-    </React.StrictMode>
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

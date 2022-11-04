@@ -1,18 +1,29 @@
-import {AxiosError} from 'axios';
-import {DefaultOptions, QueryClient, UseMutationOptions, UseQueryOptions} from 'react-query';
+import { AxiosError } from 'axios';
+import { QueryClient, UseQueryOptions, UseMutationOptions, DefaultOptions } from 'react-query';
+import { PromiseValue } from 'type-fest';
 
 const queryConfig: DefaultOptions = {
-    queries: {
-        useErrorBoundary: true,
-        refetchOnWindowFocus: false,
-        retry: false,
-    },
+  queries: {
+    useErrorBoundary: true,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    retry: true,
+  },
 };
 
-export const queryClient = new QueryClient({defaultOptions: queryConfig});
+export const queryClient = new QueryClient({ defaultOptions: queryConfig });
 
-export type QueryConfig<FetcherFnType extends (...args: any) => any> = UseQueryOptions<Awaited<ReturnType<FetcherFnType>>>;
+export type ExtractFnReturnType<FnType extends (...args: any) => any> = PromiseValue<
+  ReturnType<FnType>
+>;
 
-export type MutationConfig<FetcherFnType extends (...args: any) => any> = UseMutationOptions<Awaited<ReturnType<FetcherFnType>>,
-    AxiosError,
-    Parameters<FetcherFnType>[0]>;
+export type QueryConfig<QueryFnType extends (...args: any) => any> = Omit<
+  UseQueryOptions<ExtractFnReturnType<QueryFnType>>,
+  'queryKey' | 'queryFn'
+>;
+
+export type MutationConfig<MutationFnType extends (...args: any) => any> = UseMutationOptions<
+  ExtractFnReturnType<MutationFnType>,
+  AxiosError,
+  Parameters<MutationFnType>[0]
+>;

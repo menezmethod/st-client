@@ -1,13 +1,14 @@
-import {Navigate, Route, Routes} from 'react-router-dom';
-import {JournalsList} from '../components/JournalsList';
-import {Journal} from './Journal';
+import { Navigate, Route, Routes } from 'react-router-dom';
+
+import { Journal } from './Journal';
+import { Journals } from './Journals';
 
 export const JournalsRoutes = () => {
-    return (
-        <Routes>
-            <Route path="journals" element={<JournalsList/>}/>
-            <Route path="journals/:tradeId" element={<Journal/>}/>
-            <Route path="*" element={<Navigate to="."/>}/>
-        </Routes>
-    );
+  return (
+    <Routes>
+      <Route path="" element={<Journals />} />
+      <Route path=":journalId" element={<Journal />} />
+      <Route path="*" element={<Navigate to="." />} />
+    </Routes>
+  );
 };

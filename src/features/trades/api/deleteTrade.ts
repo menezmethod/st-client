@@ -1,44 +1,48 @@
-import {axios} from '@/lib/axios';
-import {MutationConfig, queryClient} from '@/lib/react-query';
-import createStore from '@/redux/createStore';
-import {setSnackbar} from '@/redux/models/snackbar';
-import {useMutation} from 'react-query';
+import { useMutation } from 'react-query';
 
-export type DeleteTradeDTO = {
-    tradeId: string;
-};
+import { axios } from '@/lib/axios';
+import { MutationConfig, queryClient } from '@/lib/react-query';
+import { useNotificationStore } from '@/stores/notifications';
 
-export const deleteTrade = ({tradeId}: DeleteTradeDTO) => {
-    return axios.delete(`/trade/${tradeId}`);
+import { Trade } from '../types';
+
+export const deleteTrade = ({ tradeId }: { tradeId: string }) => {
+  return axios.delete(`/trades/${tradeId}`);
 };
 
 type UseDeleteTradeOptions = {
-    config?: MutationConfig<typeof deleteTrade>;
+  journalId: string;
+  config?: MutationConfig<typeof deleteTrade>;
 };
 
-export const useDeleteTrade = ({config}: UseDeleteTradeOptions = {}) => {
-    return useMutation({
-        onMutate: async (deletedTrade) => {
-            await queryClient.cancelQueries('trades');
+export const useDeleteTrade = ({ config, journalId }: UseDeleteTradeOptions) => {
+  const { addNotification } = useNotificationStore();
+  return useMutation({
+    onMutate: async (deletedTrade) => {
+      await queryClient.cancelQueries(['trades', journalId]);
 
-            // const previousTrades = queryClient.getQueryData<Trade[]>('trades');
+      const previousTrades = queryClient.getQueryData<Trade[]>(['trades', journalId]);
 
-            // queryClient.setQueryData(
-            //   'trades',
-            //   previousTrades?.filter((trade) => trade.id !== deletedTrade.tradeId)
-            // );
-            // return { previousTrades };
-        },
-        onError: (_, __, context: any) => {
-            if (context?.previousTrades) {
-                queryClient.setQueryData('trades', context.previousTrades);
-            }
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries('trades');
-            createStore.dispatch(setSnackbar(true, 'success', 'Trade Deleted'));
-        },
-        ...config,
-        mutationFn: deleteTrade,
-    });
+      queryClient.setQueryData(
+        ['trades', journalId],
+        previousTrades?.filter((trade) => trade.id !== deletedTrade.tradeId)
+      );
+
+      return { previousTrades };
+    },
+    onError: (_, __, context: any) => {
+      if (context?.previousTrades) {
+        queryClient.setQueryData(['trades', journalId], context.previousTrades);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['trades', journalId]);
+      addNotification({
+        type: 'success',
+        title: 'Trade Deleted',
+      });
+    },
+    ...config,
+    mutationFn: deleteTrade,
+  });
 };

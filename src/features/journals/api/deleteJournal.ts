@@ -1,45 +1,48 @@
-import {axios} from '@/lib/axios';
-import {MutationConfig, queryClient} from '@/lib/react-query';
-import createStore from '@/redux/createStore';
-import {setSnackbar} from '@/redux/models/snackbar';
-import {useMutation} from 'react-query';
+import { useMutation } from 'react-query';
 
+import { axios } from '@/lib/axios';
+import { MutationConfig, queryClient } from '@/lib/react-query';
+import { useNotificationStore } from '@/stores/notifications';
 
-export type DeleteJournalDTO = {
-    journalId: string;
-};
+import { Journal } from '../types';
 
-export const deleteJournal = ({journalId}: DeleteJournalDTO) => {
-    return axios.delete(`/journal/${journalId}`);
+export const deleteJournal = ({ journalId }: { journalId: string }) => {
+  return axios.delete(`/journal/${journalId}`);
 };
 
 type UseDeleteJournalOptions = {
-    config?: MutationConfig<typeof deleteJournal>;
+  config?: MutationConfig<typeof deleteJournal>;
 };
 
-export const useDeleteJournal = ({config}: UseDeleteJournalOptions = {}) => {
-    return useMutation({
-        onMutate: async (deletedJournal) => {
-            await queryClient.cancelQueries('journals');
+export const useDeleteJournal = ({ config }: UseDeleteJournalOptions = {}) => {
+  const { addNotification } = useNotificationStore();
 
-            // const previousJournals = queryClient.getQueryData<Journal[]>('journals');
+  return useMutation({
+    onMutate: async (deletedJournal) => {
+      await queryClient.cancelQueries('journals');
 
-            //   queryClient.setQueryData(
-            //     'journals',
-            //     previousJournals?.filter((journal) => journal.id !== deletedJournal.journalId)
-            //   );
-            // return { previousJournals };
-        },
-        onError: (_, __, context: any) => {
-            // if (context?.previousJournals) {
-            //   queryClient.setQueryData('journals', context.previousJournals);
-            // }
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries('journals');
-            createStore.dispatch(setSnackbar(true, 'success', 'Journal Deleted'));
-        },
-        ...config,
-        mutationFn: deleteJournal,
-    });
+      const previousJournals = queryClient.getQueryData<Journal[]>('journals');
+
+      queryClient.setQueryData(
+        'journals',
+        previousJournals?.filter((journal) => journal.id !== deletedJournal.journalId)
+      );
+
+      return { previousJournals };
+    },
+    onError: (_, __, context: any) => {
+      if (context?.previousJournals) {
+        queryClient.setQueryData('journals', context.previousJournals);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries('journals');
+      addNotification({
+        type: 'success',
+        title: 'Journal Deleted',
+      });
+    },
+    ...config,
+    mutationFn: deleteJournal,
+  });
 };

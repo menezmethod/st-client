@@ -1,474 +1,261 @@
-import React from 'react';
-import styled from "styled-components";
+import { Dialog, Menu, Transition } from '@headlessui/react';
+import {
+  UserIcon,
+  FolderIcon,
+  HomeIcon,
+  MenuAlt2Icon,
+  UsersIcon,
+  XIcon,
+  ChartBarIcon,
+} from '@heroicons/react/outline';
+import clsx from 'clsx';
+import * as React from 'react';
+import { NavLink, Link } from 'react-router-dom';
+
+import logo from '@/assets/strat_logo_w.svg';
+import { useAuth } from '@/lib/auth';
+import { useAuthorization, ROLES } from '@/lib/authorization';
+
+type SideNavigationItem = {
+  name: string;
+  to: string;
+  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+};
+
+const SideNavigation = () => {
+  const { checkAccess } = useAuthorization();
+  const navigation = [
+    { name: 'Dashboard', to: '.', icon: HomeIcon },
+    { name: 'Journals', to: './journals', icon: FolderIcon },
+    { name: 'Reports', to: './reports', icon: ChartBarIcon },
+    checkAccess({ allowedRoles: [ROLES.ADMIN] }) && {
+      name: 'Users',
+      to: './users',
+      icon: UsersIcon,
+    },
+  ].filter(Boolean) as SideNavigationItem[];
+
+  return (
+    <>
+      {navigation.map((item, index) => (
+        <NavLink
+          end={index === 0}
+          key={item.name}
+          to={item.to}
+          className={clsx(
+            'text-gray-300 hover:bg-gray-700 hover:text-white',
+            'group flex items-center px-2 py-2 text-base font-medium rounded-md'
+          )}
+          // activeClassName="bg-gray-900 text-white"
+        >
+          <item.icon
+            className={clsx(
+              'text-gray-400 group-hover:text-gray-300',
+              'mr-4 flex-shrink-0 h-6 w-6'
+            )}
+            aria-hidden="true"
+          />
+          {item.name}
+        </NavLink>
+      ))}
+    </>
+  );
+};
+
+type UserNavigationItem = {
+  name: string;
+  to: string;
+  onClick?: () => void;
+};
+
+const UserNavigation = () => {
+  const { logout } = useAuth();
+
+  const userNavigation = [
+    { name: 'Your Profile', to: './profile' },
+    {
+      name: 'Sign out',
+      to: '',
+      onClick: () => {
+        logout();
+      },
+    },
+  ].filter(Boolean) as UserNavigationItem[];
+
+  return (
+    <Menu as="div" className="ml-3 relative">
+      {({ open }) => (
+        <>
+          <div>
+            <Menu.Button className="max-w-xs  bg-gray-200 p-2 flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <span className="sr-only">Open user menu</span>
+              <UserIcon className="h-8 w-8 rounded-full" />
+            </Menu.Button>
+          </div>
+          <Transition
+            show={open}
+            as={React.Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items
+              static
+              className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+            >
+              {userNavigation.map((item) => (
+                <Menu.Item key={item.name}>
+                  {({ active }) => (
+                    <Link
+                      onClick={item.onClick}
+                      to={item.to}
+                      className={clsx(
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </Menu.Item>
+              ))}
+            </Menu.Items>
+          </Transition>
+        </>
+      )}
+    </Menu>
+  );
+};
+
+type MobileSidebarProps = {
+  sidebarOpen: boolean;
+  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const MobileSidebar = ({ sidebarOpen, setSidebarOpen }: MobileSidebarProps) => {
+  return (
+    <Transition.Root show={sidebarOpen} as={React.Fragment}>
+      <Dialog
+        as="div"
+        static
+        className="fixed inset-0 flex z-40 md:hidden"
+        open={sidebarOpen}
+        onClose={setSidebarOpen}
+      >
+        <Transition.Child
+          as={React.Fragment}
+          enter="transition-opacity ease-linear duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity ease-linear duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
+        </Transition.Child>
+        <Transition.Child
+          as={React.Fragment}
+          enter="transition ease-in-out duration-300 transform"
+          enterFrom="-translate-x-full"
+          enterTo="translate-x-0"
+          leave="transition ease-in-out duration-300 transform"
+          leaveFrom="translate-x-0"
+          leaveTo="-translate-x-full"
+        >
+          <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-800">
+            <Transition.Child
+              as={React.Fragment}
+              enter="ease-in-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in-out duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="absolute top-0 right-0 -mr-12 pt-2">
+                <button
+                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <span className="sr-only">Close sidebar</span>
+                  <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                </button>
+              </div>
+            </Transition.Child>
+            <div className="flex-shrink-0 flex items-center px-4">
+              <Logo />
+            </div>
+            <div className="mt-5 flex-1 h-0 overflow-y-auto">
+              <nav className="px-2 space-y-1">
+                <SideNavigation />
+              </nav>
+            </div>
+          </div>
+        </Transition.Child>
+        <div className="flex-shrink-0 w-14" aria-hidden="true" />
+      </Dialog>
+    </Transition.Root>
+  );
+};
+
+const Sidebar = () => {
+  return (
+    <div className="hidden md:flex md:flex-shrink-0">
+      <div className="flex flex-col w-64">
+        <div className="flex flex-col h-0 flex-1">
+          <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
+            <Logo />
+          </div>
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            <nav className="flex-1 px-2 py-4 bg-gray-800 space-y-1">
+              <SideNavigation />
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Logo = () => {
+  return (
+    <Link className="flex items-center text-white" to=".">
+      <img className="h-8 w-auto" src={logo} alt="Workflow" />
+    </Link>
+  );
+};
 
 type MainLayoutProps = {
-    children: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
-    return (
-        <DesktopRootRoot>
-            <SidebarNavigation>
-                <Divider src={`https://file.rendit.io/n/leKEiOrbzGCMGD6AGkcj.svg`} />
-                <Content9>
-                    <Nav>
-                        <Header>
-                            <Logo>
-                                <LogoWrap>
-                                    <Logotype
-                                        src={`./strat_logo.svg`}
-                                    />
-                                </LogoWrap>
-                            </Logo>
-                        </Header>
-                        <Search>
-                            <InputDropdown>
-                                <InputWithLabel>
-                                    <Input>
-                                        <Content1>
-                                            <Searchlg
-                                                src={`https://file.rendit.io/n/F1qIciL0SLUmahKzPywg.svg`}
-                                            />
-                                            <Text1 placeholder={`Search`} />
-                                        </Content1>
-                                    </Input>
-                                </InputWithLabel>
-                            </InputDropdown>
-                        </Search>
-                        <Navigation>
-                            <NavItemBase>
-                                <Content2>
-                                    <Homeline
-                                        src={`https://file.rendit.io/n/rfv9qlJJVvSQcD5T74Xj.svg`}
-                                    />
-                                    <Text2>Home</Text2>
-                                </Content2>
-                            </NavItemBase>
-                            <NavItemBase1>
-                                <Content2>
-                                    <Homeline
-                                        src={`https://file.rendit.io/n/Pk2jO8g3On0Wh1iv7LaG.svg`}
-                                    />
-                                    <Text3>Dashboard</Text3>
-                                </Content2>
-                            </NavItemBase1>
-                            <NavItemBase>
-                                <Content2>
-                                    <Homeline
-                                        src={`https://file.rendit.io/n/baqcTzP3BqcqOMsmHGk6.svg`}
-                                    />
-                                    <Text2>Journals</Text2>
-                                </Content2>
-                            </NavItemBase>
-                            <NavItemBase>
-                                <Content2>
-                                    <Homeline
-                                        src={`https://file.rendit.io/n/YcBVOoU17HYAtX5ILyAd.svg`}
-                                    />
-                                    <Text2>Trades</Text2>
-                                </Content2>
-                            </NavItemBase>
-                            <NavItemBase>
-                                <Content2>
-                                    <Homeline
-                                        src={`https://file.rendit.io/n/TWI9B0G0FY6Rq9k7lKtJ.svg`}
-                                    />
-                                    <Text2>Reporting</Text2>
-                                </Content2>
-                            </NavItemBase>
-                            <NavItemBase>
-                                <Content2>
-                                    <Homeline
-                                        src={`https://file.rendit.io/n/ikLQ5Xb9i4hPpfIY3L9E.svg`}
-                                    />
-                                    <Text2>Users</Text2>
-                                </Content2>
-                            </NavItemBase>
-                        </Navigation>
-                    </Nav>
-                    <Footer>
-                        <Navigation1>
-                            <NavItemBase6 />
-                            <NavItemBase6>
-                                <Content2>
-                                    <Homeline
-                                        src={`https://file.rendit.io/n/Mzwj3zougFASRxRef1Du.svg`}
-                                    />
-                                    <Text2>Settings</Text2>
-                                </Content2>
-                            </NavItemBase6>
-                        </Navigation1>
-                        <Account>
-                            <FlexRow>
-                                <Avatar />
-                                <FlexColumn>
-                                    <Text9>Luis Gimenez</Text9>
-                                    <SupportingText>luis@gimenez.dev</SupportingText>
-                                </FlexColumn>
-                            </FlexRow>
-                            <Button1>
-                                <Searchlg
-                                    src={`https://file.rendit.io/n/dpRLAP11JOF9Y64dCQmj.svg`}
-                                />
-                            </Button1>
-                        </Account>
-                    </Footer>
-                </Content9>
-            </SidebarNavigation>
-            <MainWrap>
-                <Main>
-                        <Container>
-                            {children}
-                        </Container>
-                </Main>
-            </MainWrap>
-        </DesktopRootRoot>
-    );
-};
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
-const Searchlg = styled.img`
-  width: 20px;
-  height: 20px;
-`;
-const NavItemBase = styled.div`
-  height: 26px;
-  gap: 8px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: center;
-  background-color: #0f1728;
-  overflow: hidden;
-  border-radius: 6px;
-  padding: 7px 11px;
-`;
-const Content2 = styled.div`
-  width: 223px;
-  gap: 12px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-const Homeline = styled.img`
-  width: 24px;
-  height: 24px;
-`;
-const Text2 = styled.div`
-  color: #f2f3f6;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: Inter;
-  line-height: 24px;
-  white-space: nowrap;
-`;
-const NavItemBase6 = styled.div`
-  gap: 8px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: center;
-  background-color: #0f1728;
-  overflow: hidden;
-  border-radius: 6px;
-  padding: 7px 11px;
-`;
-const Text9 = styled.div`
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: Inter;
-  line-height: 20px;
-  white-space: nowrap;
-`;
-const HeaderSection = styled.div`
-  gap: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-`;
-const DesktopRootRoot = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  background-color: #0f1728;
-`;
-const SidebarNavigation = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  background-color: #0f1728;
-  overflow: hidden;
-`;
-const Divider = styled.img`
-  width: 1px;
-  align-self: stretch;
-`;
-const Content9 = styled.div`
-  width: 280px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  justify-content: space-between;
-  align-self: stretch;
-  align-items: flex-start;
-`;
-const Nav = styled.div`
-  gap: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-  padding: 31px 0 0 0;
-`;
-const Header = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-  padding: 0 19px 0 23px;
-`;
-const Logo = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
-const LogoWrap = styled.div`
-  gap: 9.83px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-const Logomark = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.06),
-    0 1px 3px 0 rgba(16, 24, 40, 0.1);
-`;
-const Content = styled.img`
-  width: 32px;
-  height: 32px;
-`;
-const Logotype = styled.img`
-  width: 100.17px;
-  height: 32px;
-  filter: invert(100%);
-`;
-const Search = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-  padding: 0 23px;
-`;
-const InputDropdown = styled.div`
-  gap: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-`;
-const InputWithLabel = styled.div`
-  gap: 6px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-`;
-const Input = styled.div`
-  gap: 8px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: center;
-  border-style: solid;
-  border-color: #475466;
-  background-color: #475466;
-  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-  overflow: hidden;
-  border-radius: 8px;
-  padding: 9px 13px;
-  border-width: 1px;
-`;
-const Content1 = styled.div`
-  width: 203px;
-  gap: 8px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-const Text1 = styled.input`
-  width: 100%;
-  display: inline-block;
-  padding: 0;
-  color: #ffffff;
-  font-size: 16px;
-  font-family: Inter;
-  line-height: 24px;
-  white-space: nowrap;
-  outline-width: 0;
-  border-width: 0;
-  background: none;
-  ::placeholder {
-    color: #ffffff;
-  }
-`;
-const Navigation = styled.div`
-  gap: 4px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-  padding: 0 15px;
-`;
-const NavItemBase1 = styled.div`
-  height: 26px;
-  gap: 8px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: center;
-  background-color: #344053;
-  overflow: hidden;
-  border-radius: 6px;
-  padding: 7px 11px;
-`;
-const Text3 = styled.div`
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: Inter;
-  line-height: 24px;
-  white-space: nowrap;
-`;
-const Footer = styled.div`
-  gap: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-  padding: 0 15px 31px 15px;
-`;
-const Navigation1 = styled.div`
-  gap: 4px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-`;
-const Account = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 24px 32px 0px 8px;
-  gap: 47px;
-  isolation: isolate;
-  width: 280px;
-  height: 50px;
-  border-top: 1px solid #475467;
-  flex: none;
-  order: 2;
-  align-self: stretch;
-  flex-grow: 0;
-`;
-const FlexRow = styled.div`
-  width: 207px;
-  gap: 12px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-const Avatar = styled.div`
-  width: 40px;
-  height: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 200px;
-`;
-const FlexColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
-const SupportingText = styled.div`
-  color: #f2f3f6;
-  font-size: 14px;
-  font-family: Inter;
-  line-height: 20px;
-  white-space: nowrap;
-`;
-const Button1 = styled.button`
-  gap: 8px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border-radius: 8px;
-  padding: 2px;
-  border-width: 0;
-  background: none;
-  box-sizing: content-box;
-  cursor: pointer;
-  &:hover {
-    opacity: 70%;
-  }
-`;
-const MainWrap = styled.div`
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
-const Main = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-  background-color: #ffffff;
-  padding: 31px 0 215px 0;
-  border-width: 1px;
-`;
-const Container = styled.div`
-  min-height: 73vh;
-  gap: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  align-items: flex-start;
-  padding: 0 31px;
-`;
+  return (
+    <div className="h-screen flex overflow-hidden bg-gray-100">
+      <MobileSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Sidebar />
+      <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
+          <button
+            className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <span className="sr-only">Open sidebar</span>
+            <MenuAlt2Icon className="h-6 w-6" aria-hidden="true" />
+          </button>
+          <div className="flex-1 px-4 flex justify-end">
+            <div className="ml-4 flex items-center md:ml-6">
+              <UserNavigation />
+            </div>
+          </div>
+        </div>
+        <main className="flex-1 relative overflow-y-auto focus:outline-none">{children}</main>
+      </div>
+    </div>
+  );
+};
