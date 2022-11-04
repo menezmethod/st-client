@@ -4,47 +4,47 @@ import * as z from 'zod';
 import { Button } from '@/components/Elements';
 import { Form, FormDrawer, TextAreaField } from '@/components/Form';
 
-import { CreateCommentDTO, useCreateComment } from '../api/createComment';
+import { CreateTradeDTO, useCreateTrade } from '../api/createTrade';
 
 const schema = z.object({
   body: z.string().min(1, 'Required'),
 });
 
-type CreateCommentProps = {
-  discussionId: string;
+type CreateTradeProps = {
+  journalId: string;
 };
 
-export const CreateComment = ({ discussionId }: CreateCommentProps) => {
-  const createCommentMutation = useCreateComment({ discussionId });
+export const CreateTrade = ({ journalId }: CreateTradeProps) => {
+  const createTradeMutation = useCreateTrade({ journalId: journalId });
   return (
     <>
       <FormDrawer
-        isDone={createCommentMutation.isSuccess}
+        isDone={createTradeMutation.isSuccess}
         triggerButton={
           <Button size="sm" startIcon={<PlusIcon className="h-4 w-4" />}>
-            Create Comment
+            Create Trade
           </Button>
         }
-        title="Create Comment"
+        title="Create Trade"
         submitButton={
           <Button
-            isLoading={createCommentMutation.isLoading}
-            form="create-comment"
+            isLoading={createTradeMutation.isLoading}
+            form="create-trade"
             type="submit"
             size="sm"
-            disabled={createCommentMutation.isLoading}
+            disabled={createTradeMutation.isLoading}
           >
             Submit
           </Button>
         }
       >
-        <Form<CreateCommentDTO['data'], typeof schema>
-          id="create-comment"
+        <Form<CreateTradeDTO['data'], typeof schema>
+          id="create-trade"
           onSubmit={async (values) => {
-            await createCommentMutation.mutateAsync({
+            await createTradeMutation.mutateAsync({
               data: {
                 body: values.body,
-                discussionId,
+                journalId: journalId,
               },
             });
           }}

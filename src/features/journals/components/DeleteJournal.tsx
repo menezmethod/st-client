@@ -20,7 +20,7 @@ export const DeleteJournal = ({ id }: DeleteJournalProps) => {
         body="Are you sure you want to delete this journal?"
         triggerButton={
           <Button variant="danger" startIcon={<TrashIcon className="h-4 w-4" />}>
-            Delete Journal
+            Delete
           </Button>
         }
         confirmButton={

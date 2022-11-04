@@ -8,18 +8,18 @@ import { requireAuth, delayedResponse } from '../utils';
 
 type CreateCommentBody = {
   body: string;
-  discussionId: string;
+  journalId: string;
 };
 
 export const commentsHandlers = [
   rest.get(`${API_URL}/comments`, (req, res, ctx) => {
     try {
       requireAuth(req);
-      const discussionId = req.url.searchParams.get('discussionId') || '';
+      const journalId = req.url.searchParams.get('journalId') || '';
       const result = db.comment.findMany({
         where: {
-          discussionId: {
-            equals: discussionId,
+          journalId: {
+            equals: journalId,
           },
         },
       });

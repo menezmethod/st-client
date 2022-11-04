@@ -6,7 +6,7 @@ import { ExtractFnReturnType, QueryConfig } from '@/lib/react-query';
 import { Journal } from '../types';
 
 export const getJournal = ({ journalId }: { journalId: string }): Promise<Journal> => {
-  return axios.get(`/journals/${journalId}`);
+  return axios.get(`/journal/${journalId}`);
 };
 
 type QueryFnType = typeof getJournal;

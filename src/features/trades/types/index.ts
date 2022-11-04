@@ -1,7 +1,7 @@
 import { BaseEntity } from '@/types';
 
-export type Comment = {
+export type Trade = {
   body: string;
   authorId: string;
-  discussionId: string;
+  journalId: string;
 } & BaseEntity;

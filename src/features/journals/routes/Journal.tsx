@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { Spinner, MDPreview } from '@/components/Elements';
 import { Head } from '@/components/Head';
 import { ContentLayout } from '@/components/Layout';
-import { Comments } from '@/features/comments';
 import { formatDate } from '@/utils/format';
 
 import { useJournal } from '../api/getJournal';
@@ -11,6 +10,7 @@ import { UpdateJournal } from '../components/UpdateJournal';
 
 export const Journal = () => {
   const { journalId } = useParams();
+  if (!journalId) return;
   const journalQuery = useJournal({ journalId });
 
   if (journalQuery.isLoading) {
@@ -25,8 +25,8 @@ export const Journal = () => {
 
   return (
     <>
-      <Head title={journalQuery.data.title} />
-      <ContentLayout title={journalQuery.data.title}>
+      <Head title={journalQuery.data.name} />
+      <ContentLayout title={journalQuery.data.name}>
         <span className="text-xs font-bold">{formatDate(journalQuery.data.createdAt)}</span>
         <div className="mt-6 flex flex-col space-y-16">
           <div className="flex justify-end">
@@ -36,14 +36,12 @@ export const Journal = () => {
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
               <div className="px-4 py-5 sm:px-6">
                 <div className="mt-1 max-w-2xl text-sm text-gray-500">
-                  <MDPreview value={journalQuery.data.body} />
+                  <MDPreview value={journalQuery.data.description} />
                 </div>
               </div>
             </div>
           </div>
-          <div>
-            <Comments journalId={journalId} />
-          </div>
+          <div>{/*<Trades journalId={journalId} />*/}</div>
         </div>
       </ContentLayout>
     </>

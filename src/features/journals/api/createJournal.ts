@@ -8,13 +8,16 @@ import { Journal } from '../types';
 
 export type CreateJournalDTO = {
   data: {
-    title: string;
-    body: string;
+    name: string;
+    description: string;
+    createdBy: string;
+    endDate: Date;
+    startDate: Date;
   };
 };
 
 export const createJournal = ({ data }: CreateJournalDTO): Promise<Journal> => {
-  return axios.post(`/journals`, data);
+  return axios.post(`/journal`, data);
 };
 
 type UseCreateJournalOptions = {

@@ -7,14 +7,17 @@ import { Authorization, ROLES } from '@/lib/authorization';
 
 import { useJournal } from '../api/getJournal';
 import { UpdateJournalDTO, useUpdateJournal } from '../api/updateJournal';
+import { DatePicker } from '@/components/Form/DatePicker';
 
 type UpdateJournalProps = {
   journalId: string;
 };
 
 const schema = z.object({
-  title: z.string().min(1, 'Required'),
-  body: z.string().min(1, 'Required'),
+  name: z.string().min(1, 'Required'),
+  description: z.string().min(1, 'Required'),
+  startDate: z.string(),
+  endDate: z.string(),
 });
 
 export const UpdateJournal = ({ journalId }: UpdateJournalProps) => {
@@ -49,8 +52,10 @@ export const UpdateJournal = ({ journalId }: UpdateJournalProps) => {
           }}
           options={{
             defaultValues: {
-              title: journalQuery.data?.title,
-              body: journalQuery.data?.body,
+              name: journalQuery.data?.name,
+              description: journalQuery.data?.description,
+              startDate: journalQuery.data?.startDate,
+              endDate: journalQuery.data?.endDate,
             },
           }}
           schema={schema}
@@ -58,15 +63,33 @@ export const UpdateJournal = ({ journalId }: UpdateJournalProps) => {
           {({ register, formState }) => (
             <>
               <InputField
-                label="Title"
-                error={formState.errors['title']}
-                registration={register('title')}
+                label="Name"
+                error={formState.errors['name']}
+                registration={register('name')}
               />
+
               <TextAreaField
-                label="Body"
-                error={formState.errors['body']}
-                registration={register('body')}
+                label="Description"
+                error={formState.errors['description']}
+                registration={register('description')}
               />
+              <div>
+                <div>
+                  <DatePicker
+                    label="Start Date"
+                    error={formState.errors['startDate']}
+                    registration={register('startDate')}
+                  />
+                </div>
+                <br />
+                <div>
+                  <DatePicker
+                    label="End Date"
+                    error={formState.errors['endDate']}
+                    registration={register('endDate')}
+                  />
+                </div>
+              </div>
             </>
           )}
         </Form>

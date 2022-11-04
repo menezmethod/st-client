@@ -7,7 +7,7 @@ import { useNotificationStore } from '@/stores/notifications';
 import { Journal } from '../types';
 
 export const deleteJournal = ({ journalId }: { journalId: string }) => {
-  return axios.delete(`/journals/${journalId}`);
+  return axios.delete(`/journal/${journalId}`);
 };
 
 type UseDeleteJournalOptions = {
