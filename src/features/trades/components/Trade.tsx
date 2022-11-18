@@ -1,11 +1,11 @@
-import { TradesList } from './TradesList';
 import { CreateTrade } from './CreateTrade';
+import { TradesList } from './TradesList';
 
-type CommentsProps = {
+type TradesProps = {
   journalId: string;
 };
 
-export const Trades = ({ journalId }: CommentsProps) => {
+export const Trade = ({ journalId }: TradesProps) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">

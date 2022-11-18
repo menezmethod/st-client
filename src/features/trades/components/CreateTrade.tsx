@@ -2,12 +2,30 @@ import { PlusIcon } from '@heroicons/react/outline';
 import * as z from 'zod';
 
 import { Button } from '@/components/Elements';
-import { Form, FormDrawer, TextAreaField } from '@/components/Form';
+import { Form, FormDrawer, InputField, TextAreaField } from '@/components/Form';
+import { DateTimePicker } from '@/components/Form/DateTimePicker';
+import { Hidden } from '@/components/Form/Hidden';
+import { useAuth } from '@/lib/auth';
 
 import { CreateTradeDTO, useCreateTrade } from '../api/createTrade';
 
 const schema = z.object({
-  body: z.string().min(1, 'Required'),
+  baseInstrument: z.string(),
+  comments: z.string(),
+  createdBy: z.string(),
+  direction: z.string(),
+  entryPrice: z.string(),
+  exitPrice: z.string(),
+  journal: z.string(),
+  market: z.string(),
+  outcome: z.string(),
+  quantity: z.string(),
+  quoteInstrument: z.string(),
+  stopLoss: z.string(),
+  strategy: z.string(),
+  takeProfit: z.string(),
+  timeClosed: z.string(),
+  timeExecuted: z.string(),
 });
 
 type CreateTradeProps = {
@@ -15,6 +33,7 @@ type CreateTradeProps = {
 };
 
 export const CreateTrade = ({ journalId }: CreateTradeProps) => {
+  const { user } = useAuth();
   const createTradeMutation = useCreateTrade({ journalId: journalId });
   return (
     <>
@@ -34,28 +53,79 @@ export const CreateTrade = ({ journalId }: CreateTradeProps) => {
             size="sm"
             disabled={createTradeMutation.isLoading}
           >
-            Submit
+            Add
           </Button>
         }
       >
         <Form<CreateTradeDTO['data'], typeof schema>
-          id="create-trade"
+          id="create-journal"
           onSubmit={async (values) => {
-            await createTradeMutation.mutateAsync({
-              data: {
-                body: values.body,
-                journalId: journalId,
-              },
-            });
+            await createTradeMutation.mutateAsync({ data: values });
           }}
           schema={schema}
         >
           {({ register, formState }) => (
-            <TextAreaField
-              label="Body"
-              error={formState.errors['body']}
-              registration={register('body')}
-            />
+            <>
+              <div className="flex mb-4">
+                <div className="w-full h-12">
+                  <InputField
+                    label="Base"
+                    error={formState.errors['baseInstrument']}
+                    registration={register('baseInstrument')}
+                  />
+                </div>
+                <div className="w-full h-12">
+                  <InputField
+                    label="Symbol"
+                    error={formState.errors['quoteInstrument']}
+                    registration={register('quoteInstrument')}
+                  />
+                </div>
+              </div>
+              <div className="flex mb-4">
+                <div className="w-full h-12">
+                  <InputField
+                    label="Entry Price"
+                    error={formState.errors['entryPrice']}
+                    registration={register('entryPrice')}
+                  />
+                </div>
+                <div className="w-full h-12">
+                  <InputField
+                    label="Exit Price"
+                    error={formState.errors['exitPrice']}
+                    registration={register('exitPrice')}
+                  />
+                </div>
+              </div>
+              <InputField
+                label="Side"
+                error={formState.errors['direction']}
+                registration={register('direction')}
+              />
+              <div className="flex mb-4">
+                <div className="w-full h-12">
+                  <DateTimePicker
+                    label="Date Opened"
+                    error={formState.errors['timeExecuted']}
+                    registration={register('timeExecuted')}
+                  />
+                </div>
+                <div className="w-full h-12">
+                  <DateTimePicker
+                    label="Date Closed"
+                    error={formState.errors['timeClosed']}
+                    registration={register('timeClosed')}
+                  />
+                </div>
+                <Hidden value={user?.email} registration={register('createdBy')} />
+              </div>
+              <TextAreaField
+                label="Comments"
+                error={formState.errors['comments']}
+                registration={register('comments')}
+              />
+            </>
           )}
         </Form>
       </FormDrawer>

@@ -8,13 +8,29 @@ import { Trade } from '../types';
 
 export type CreateTradeDTO = {
   data: {
-    body: string;
+    baseInstrument: string;
+    comments: string;
+    createdAt: Date;
+    createdBy: string;
+    direction: string;
+    entryPrice: string;
+    exitPrice: string;
+    journal: string;
     journalId: string;
+    market: string;
+    outcome: string;
+    quantity: string;
+    quoteInstrument: string;
+    stopLoss: string;
+    strategy: string;
+    takeProfit: string;
+    timeClosed: Date;
+    timeExecuted: Date;
   };
 };
 
 export const createTrade = ({ data }: CreateTradeDTO): Promise<Trade> => {
-  return axios.post('/trades', data);
+  return axios.post('/trade/', data);
 };
 
 type UseCreateTradeOptions = {

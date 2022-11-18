@@ -3,11 +3,11 @@ import * as z from 'zod';
 
 import { Button } from '@/components/Elements';
 import { Form, FormDrawer, InputField, TextAreaField } from '@/components/Form';
+import { DatePicker } from '@/components/Form/DatePicker';
 import { Authorization, ROLES } from '@/lib/authorization';
 
 import { useJournal } from '../api/getJournal';
 import { UpdateJournalDTO, useUpdateJournal } from '../api/updateJournal';
-import { DatePicker } from '@/components/Form/DatePicker';
 
 type UpdateJournalProps = {
   journalId: string;

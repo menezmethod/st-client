@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { Spinner, MDPreview } from '@/components/Elements';
 import { Head } from '@/components/Head';
 import { ContentLayout } from '@/components/Layout';
+import { CreateTrade } from '@/features/trades/components/CreateTrade';
+import { TradesList } from '@/features/trades/components/TradesList';
 import { formatDate } from '@/utils/format';
 
 import { useJournal } from '../api/getJournal';
@@ -10,7 +12,6 @@ import { UpdateJournal } from '../components/UpdateJournal';
 
 export const Journal = () => {
   const { journalId } = useParams();
-  if (!journalId) return;
   const journalQuery = useJournal({ journalId });
 
   if (journalQuery.isLoading) {
@@ -31,6 +32,9 @@ export const Journal = () => {
         <div className="mt-6 flex flex-col space-y-16">
           <div className="flex justify-end">
             <UpdateJournal journalId={journalId} />
+            <div>
+              <CreateTrade journalId={journalId} />
+            </div>
           </div>
           <div>
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -41,7 +45,9 @@ export const Journal = () => {
               </div>
             </div>
           </div>
-          <div>{/*<Trades journalId={journalId} />*/}</div>
+          <div>
+            <TradesList journalId={journalId} />
+          </div>
         </div>
       </ContentLayout>
     </>

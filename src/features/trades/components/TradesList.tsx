@@ -1,10 +1,8 @@
 import { ArchiveIcon } from '@heroicons/react/outline';
 
-import { Spinner, MDPreview } from '@/components/Elements';
-import { User } from '@/features/users';
-import { useAuth } from '@/lib/auth';
-import { POLICIES, Authorization } from '@/lib/authorization';
-import { formatDate } from '@/utils/format';
+import { Link, Spinner, Table } from '@/components/Elements';
+import { Trade } from '@/features/trades';
+import { formatDateShort } from '@/utils/format';
 
 import { useTrades } from '../api/getTrades';
 
@@ -15,7 +13,6 @@ type TradesListProps = {
 };
 
 export const TradesList = ({ journalId }: TradesListProps) => {
-  const { user } = useAuth();
   const tradesQuery = useTrades({ journalId: journalId });
 
   if (tradesQuery.isLoading) {
@@ -34,28 +31,86 @@ export const TradesList = ({ journalId }: TradesListProps) => {
         className="bg-white text-gray-500 h-40 flex justify-center items-center flex-col"
       >
         <ArchiveIcon className="h-10 w-10" />
-        <h4>No Trades Found</h4>
+        <h4>No Trade Found</h4>
       </div>
     );
 
   return (
-    <ul aria-label="trades" className="flex flex-col space-y-3">
-      {tradesQuery.data.map((trade, index) => (
-        <li
-          aria-label={`comment-${trade.body}-${index}`}
-          key={trade.id || index}
-          className="w-full bg-white shadow-sm p-4"
-        >
-          <Authorization policyCheck={POLICIES['comment:delete'](user as User, trade)}>
-            <div className="flex justify-between">
-              <span className="text-xs font-semibold">{formatDate(trade.createdAt)}</span>
-              <DeleteTrade journalId={journalId} id={trade.id} />
-            </div>
-          </Authorization>
-
-          <MDPreview value={trade.body} />
-        </li>
-      ))}
-    </ul>
+    <Table<Trade>
+      data={tradesQuery.data}
+      columns={[
+        {
+          title: 'Status',
+          field: 'outcome',
+          Cell({ entry: { outcome, id } }) {
+            return (
+              <span>
+                <Link to={`./trade/${id}`}>{outcome}</Link>
+              </span>
+            );
+          },
+        },
+        {
+          title: 'Date',
+          field: 'timeExecuted',
+          Cell({ entry: { timeExecuted } }) {
+            return <span>{formatDateShort(timeExecuted)}</span>;
+          },
+        },
+        {
+          title: 'Symbol',
+          field: 'quoteInstrument',
+          Cell({ entry: { quoteInstrument } }) {
+            return (
+              <span>
+                <strong>{quoteInstrument}</strong>
+              </span>
+            );
+          },
+        },
+        {
+          title: 'Entry',
+          field: 'entryPrice',
+          Cell({ entry: { entryPrice } }) {
+            return <span>${entryPrice}</span>;
+          },
+        },
+        {
+          title: 'Exit',
+          field: 'exitPrice',
+          Cell({ entry: { exitPrice } }) {
+            return <span>${exitPrice}</span>;
+          },
+        },
+        {
+          title: 'Size',
+          field: 'quantity',
+          Cell({ entry: { quantity } }) {
+            return <span>{quantity}</span>;
+          },
+        },
+        {
+          title: 'Side',
+          field: 'direction',
+          Cell({ entry: { direction } }) {
+            return <span>{direction}</span>;
+          },
+        },
+        {
+          title: 'Strategy',
+          field: 'strategy',
+          Cell({ entry: { strategy } }) {
+            return <span>{strategy}</span>;
+          },
+        },
+        {
+          title: '',
+          field: 'id',
+          Cell({ entry: { id } }) {
+            return <DeleteTrade id={id} />;
+          },
+        },
+      ]}
+    />
   );
 };
