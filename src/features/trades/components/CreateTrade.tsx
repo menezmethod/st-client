@@ -12,14 +12,16 @@ import { CreateTradeDTO, useCreateTrade } from '../api/createTrade';
 const schema = z.object({
   baseInstrument: z.string(),
   comments: z.string(),
-  entryPrice: z.any(),
-  exitPrice: z.any(),
-  journal: z.string(),
-  quantity: z.any(),
+  createdBy: z.string(),
+  direction: z.string(),
+  entryPrice: z.number(),
+  exitPrice: z.number().optional(),
+  journal: z.number(),
+  quantity: z.number().optional(),
   quoteInstrument: z.string(),
-  stopLoss: z.any(),
+  stopLoss: z.number().optional(),
   strategy: z.string(),
-  takeProfit: z.any(),
+  takeProfit: z.number().optional(),
   timeClosed: z.string(),
   timeExecuted: z.string(),
 });
@@ -76,41 +78,60 @@ export const CreateTrade = () => {
                   </div>
                   <div className="w-1/3 h-12">
                     <InputField
+                      type="number"
                       label="Quantity"
                       error={formState.errors['quantity']}
-                      registration={register('quantity')}
+                      registration={register('quantity', {
+                        setValueAs: (v) => (v === '' ? undefined : parseInt(v, 10)),
+                      })}
                     />
                   </div>
                 </div>
                 <div className="flex mb-4">
                   <div className="w-full h-12">
                     <InputField
+                      type="number"
+                      step="0.01"
                       label="Entry Price"
                       error={formState.errors['entryPrice']}
-                      registration={register('entryPrice')}
+                      registration={register('entryPrice', {
+                        setValueAs: (v) => (v === '' ? undefined : parseFloat(v)),
+                      })}
                     />
                   </div>
                   <div className="w-full h-12">
                     <InputField
+                      type="number"
+                      step="0.01"
                       label="Exit Price"
                       error={formState.errors['exitPrice']}
-                      registration={register('exitPrice')}
+                      registration={register('exitPrice', {
+                        setValueAs: (v) => (v === '' ? undefined : parseFloat(v)),
+                      })}
                     />
                   </div>
                 </div>
                 <div className="flex mb-4">
                   <div className="w-full h-12">
                     <InputField
+                      type="number"
+                      step="0.01"
                       label="Stop Loss"
                       error={formState.errors['stopLoss']}
-                      registration={register('stopLoss')}
+                      registration={register('stopLoss', {
+                        setValueAs: (v) => (v === '' ? undefined : parseFloat(v)),
+                      })}
                     />
                   </div>
                   <div className="w-full h-12">
                     <InputField
+                      type="number"
+                      step="0.01"
                       label="Take Profit"
                       error={formState.errors['takeProfit']}
-                      registration={register('takeProfit')}
+                      registration={register('takeProfit', {
+                        setValueAs: (v) => (v === '' ? undefined : parseFloat(v)),
+                      })}
                     />
                   </div>
                 </div>
@@ -152,7 +173,9 @@ export const CreateTrade = () => {
                 <SelectField
                   label="Journal"
                   error={formState.errors['journal']}
-                  registration={register('journal')}
+                  registration={register('journal', {
+                    setValueAs: (v) => (v === '' ? undefined : parseFloat(v)),
+                  })}
                   options={['1', '2'].map((journal) => ({
                     label: journal,
                     value: journal,

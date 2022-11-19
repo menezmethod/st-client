@@ -60,10 +60,12 @@ export const TradesList = ({ journalId }: TradesListProps) => {
         {
           title: 'Symbol',
           field: 'quoteInstrument',
-          Cell({ entry: { quoteInstrument } }) {
+          Cell({ entry: { quoteInstrument, id } }) {
             return (
               <span>
-                <strong>{quoteInstrument}</strong>
+                <Link to={`./trade/${id}`}>
+                  <strong>{quoteInstrument}</strong>
+                </Link>
               </span>
             );
           },
