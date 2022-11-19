@@ -8,6 +8,7 @@ import { Authorization, ROLES } from '@/lib/authorization';
 
 import { useJournal } from '../api/getJournal';
 import { UpdateJournalDTO, useUpdateJournal } from '../api/updateJournal';
+import { formatDateForm, formatDateFormShort } from '@/utils/format';
 
 type UpdateJournalProps = {
   journalId: string;
@@ -41,7 +42,7 @@ export const UpdateJournal = ({ journalId }: UpdateJournalProps) => {
             size="sm"
             isLoading={updateJournalMutation.isLoading}
           >
-            Submit
+            Update Journal
           </Button>
         }
       >
@@ -54,8 +55,8 @@ export const UpdateJournal = ({ journalId }: UpdateJournalProps) => {
             defaultValues: {
               name: journalQuery.data?.name,
               description: journalQuery.data?.description,
-              startDate: journalQuery.data?.startDate,
-              endDate: journalQuery.data?.endDate,
+              startDate: formatDateFormShort(journalQuery.data?.startDate),
+              endDate: formatDateFormShort(journalQuery.data?.endDate),
             },
           }}
           schema={schema}

@@ -1,2 +1,3 @@
 export * from './types';
-export * from './components/Trade';
+export * from './routes';
+export * from './routes/Trades';

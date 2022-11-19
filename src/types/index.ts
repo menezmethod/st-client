@@ -3,5 +3,6 @@ export type BaseEntity = {
   createdAt: number;
   startDate: number;
   endDate: number;
+  timeClosed: number;
   timeExecuted: number;
 };

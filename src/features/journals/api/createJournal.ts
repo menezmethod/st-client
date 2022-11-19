@@ -28,21 +28,21 @@ export const useCreateJournal = ({ config }: UseCreateJournalOptions = {}) => {
   const { addNotification } = useNotificationStore();
   return useMutation({
     onMutate: async (newJournal) => {
-      await queryClient.cancelQueries('journals');
+      await queryClient.cancelQueries('journal');
 
-      const previousJournals = queryClient.getQueryData<Journal[]>('journals');
+      const previousJournals = queryClient.getQueryData<Journal[]>('journal');
 
-      queryClient.setQueryData('journals', [...(previousJournals || []), newJournal.data]);
+      queryClient.setQueryData('journal', [...(previousJournals || []), newJournal.data]);
 
       return { previousJournals };
     },
     onError: (_, __, context: any) => {
       if (context?.previousJournals) {
-        queryClient.setQueryData('journals', context.previousJournals);
+        queryClient.setQueryData('journal', context.previousJournals);
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries('journals');
+      queryClient.invalidateQueries('journal');
       addNotification({
         type: 'success',
         title: 'Journal Created',

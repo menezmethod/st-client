@@ -16,7 +16,7 @@ export const DeleteTrade = ({ id }: DeleteTradeProps) => {
       isDone={deleteTradeMutation.isSuccess}
       icon="danger"
       title="Delete Trade"
-      body="Are you sure you want to delete this Trade?"
+      body="Are you sure you want to delete this UpdateTrade?"
       triggerButton={
         <Button variant="danger" size="sm" startIcon={<TrashIcon className="h-4 w-4" />}>
           Delete

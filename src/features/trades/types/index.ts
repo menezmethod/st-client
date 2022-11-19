@@ -16,6 +16,6 @@ export type Trade = {
   stopLoss: string;
   strategy: string;
   takeProfit: string;
-  timeClosed: Date;
-  timeExecuted: Date;
+  timeClosed: string;
+  timeExecuted: string;
 } & BaseEntity;

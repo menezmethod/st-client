@@ -39,7 +39,7 @@ export const CreateJournal = () => {
             size="sm"
             isLoading={createJournalMutation.isLoading}
           >
-            Submit
+            Create Journal
           </Button>
         }
       >

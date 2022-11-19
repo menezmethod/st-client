@@ -34,30 +34,29 @@ export const createTrade = ({ data }: CreateTradeDTO): Promise<Trade> => {
 };
 
 type UseCreateTradeOptions = {
-  journalId: string;
   config?: MutationConfig<typeof createTrade>;
 };
 
-export const useCreateTrade = ({ config, journalId }: UseCreateTradeOptions) => {
+export const useCreateTrade = ({ config }: UseCreateTradeOptions = {}) => {
   const { addNotification } = useNotificationStore();
 
   return useMutation({
     onMutate: async (newTrade) => {
-      await queryClient.cancelQueries(['trades', journalId]);
+      await queryClient.cancelQueries(['trades']);
 
-      const previousTrades = queryClient.getQueryData<Trade[]>(['trades', journalId]);
+      const previousTrades = queryClient.getQueryData<Trade[]>(['trades']);
 
-      queryClient.setQueryData(['trades', journalId], [...(previousTrades || []), newTrade.data]);
+      queryClient.setQueryData(['trades'], [...(previousTrades || []), newTrade.data]);
 
       return { previousTrades };
     },
     onError: (_, __, context: any) => {
       if (context?.previousTrades) {
-        queryClient.setQueryData(['trades', journalId], context.previousTrades);
+        queryClient.setQueryData(['trades'], context.previousTrades);
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['trades', journalId]);
+      queryClient.invalidateQueries(['trades']);
       addNotification({
         type: 'success',
         title: 'Trade Created',

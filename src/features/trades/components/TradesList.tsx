@@ -31,7 +31,7 @@ export const TradesList = ({ journalId }: TradesListProps) => {
         className="bg-white text-gray-500 h-40 flex justify-center items-center flex-col"
       >
         <ArchiveIcon className="h-10 w-10" />
-        <h4>No Trade Found</h4>
+        <h4>No Trades Found</h4>
       </div>
     );
 
