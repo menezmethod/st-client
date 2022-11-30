@@ -4,33 +4,32 @@ import { Button, ConfirmationDialog } from '@/components/Elements';
 
 import { useDeleteTrade } from '../api/deleteTrade';
 
-type DeleteCommentProps = {
+type DeleteTradeProps = {
   id: string;
-  journalId: string;
 };
 
-export const DeleteTrade = ({ id, journalId }: DeleteCommentProps) => {
-  const deleteCommentMutation = useDeleteTrade({ journalId: journalId });
+export const DeleteTrade = ({ id }: DeleteTradeProps) => {
+  const deleteTradeMutation = useDeleteTrade();
 
   return (
     <ConfirmationDialog
-      isDone={deleteCommentMutation.isSuccess}
+      isDone={deleteTradeMutation.isSuccess}
       icon="danger"
-      title="Delete Comment"
-      body="Are you sure you want to delete this comment?"
+      title="Delete Trade"
+      body="Are you sure you want to delete this UpdateTrade?"
       triggerButton={
         <Button variant="danger" size="sm" startIcon={<TrashIcon className="h-4 w-4" />}>
-          Delete Comment
+          Delete
         </Button>
       }
       confirmButton={
         <Button
-          isLoading={deleteCommentMutation.isLoading}
+          isLoading={deleteTradeMutation.isLoading}
           type="button"
           className="bg-red-600"
-          onClick={async () => await deleteCommentMutation.mutateAsync({ commentId: id })}
+          onClick={async () => await deleteTradeMutation.mutateAsync({ tradeId: id })}
         >
-          Delete Comment
+          Delete Trade
         </Button>
       }
     />

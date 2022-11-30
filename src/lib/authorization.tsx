@@ -13,12 +13,12 @@ export enum ROLES {
 type RoleTypes = keyof typeof ROLES;
 
 export const POLICIES = {
-  'comment:delete': (user: User, comment: Trade) => {
+  'trade:delete': (user: User, trade: Trade) => {
     if (user.role === 'ADMIN') {
       return true;
     }
 
-    if (user.role === 'USER' && comment.authorId === user.id) {
+    if (user.role === 'USER' && trade.createdBy === user.email) {
       return true;
     }
 

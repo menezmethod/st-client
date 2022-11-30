@@ -10,8 +10,8 @@ export type UpdateJournalDTO = {
   data: {
     name: string;
     description: string;
-    endDate: Date;
-    startDate: Date;
+    endDate: string;
+    startDate: string;
   };
   journalId: string;
 };

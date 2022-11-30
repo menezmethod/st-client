@@ -1,6 +1,6 @@
 import { Link, Spinner, Table } from '@/components/Elements';
 import { Journal } from '@/features/journals';
-import { formatDate, formatDateShort } from '@/utils/format';
+import { formatDateShort } from '@/utils/format';
 
 import { useJournals } from '../api/getJournals';
 

@@ -52,14 +52,14 @@ export const commentsHandlers = [
     }
   }),
 
-  rest.delete(`${API_URL}/comments/:commentId`, (req, res, ctx) => {
+  rest.delete(`${API_URL}/comments/:tradeId`, (req, res, ctx) => {
     try {
       const user = requireAuth(req);
-      const { commentId } = req.params;
+      const { tradeId } = req.params;
       const result = db.comment.delete({
         where: {
           id: {
-            equals: commentId,
+            equals: tradeId,
           },
           ...(user.role === 'USER' && {
             authorId: {

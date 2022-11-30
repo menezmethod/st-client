@@ -7,24 +7,24 @@ import { useNotificationStore } from '@/stores/notifications';
 import { Trade } from '../types';
 
 export const deleteTrade = ({ tradeId }: { tradeId: string }) => {
-  return axios.delete(`/trades/${tradeId}`);
+  return axios.delete(`/trade/${tradeId}`);
 };
 
 type UseDeleteTradeOptions = {
-  journalId: string;
   config?: MutationConfig<typeof deleteTrade>;
 };
 
-export const useDeleteTrade = ({ config, journalId }: UseDeleteTradeOptions) => {
+export const useDeleteTrade = ({ config }: UseDeleteTradeOptions = {}) => {
   const { addNotification } = useNotificationStore();
+
   return useMutation({
     onMutate: async (deletedTrade) => {
-      await queryClient.cancelQueries(['trades', journalId]);
+      await queryClient.cancelQueries(['trades']);
 
-      const previousTrades = queryClient.getQueryData<Trade[]>(['trades', journalId]);
+      const previousTrades = queryClient.getQueryData<Trade[]>(['trades']);
 
       queryClient.setQueryData(
-        ['trades', journalId],
+        ['trades'],
         previousTrades?.filter((trade) => trade.id !== deletedTrade.tradeId)
       );
 
@@ -32,11 +32,11 @@ export const useDeleteTrade = ({ config, journalId }: UseDeleteTradeOptions) => 
     },
     onError: (_, __, context: any) => {
       if (context?.previousTrades) {
-        queryClient.setQueryData(['trades', journalId], context.previousTrades);
+        queryClient.setQueryData(['trades'], context.previousTrades);
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['trades', journalId]);
+      queryClient.invalidateQueries(['trades']);
       addNotification({
         type: 'success',
         title: 'Trade Deleted',
