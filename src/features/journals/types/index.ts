@@ -4,8 +4,8 @@ export type Journal = {
   name: string;
   description: string;
   createdAt: Date;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   createdBy: string;
   usersSubscribed: string[];
 } & BaseEntity;

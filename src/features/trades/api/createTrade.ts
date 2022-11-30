@@ -8,40 +8,55 @@ import { Trade } from '../types';
 
 export type CreateTradeDTO = {
   data: {
-    body: string;
+    baseInstrument: string;
+    comments: string;
+    createdAt: Date;
+    createdBy: string;
+    direction: string;
+    entryPrice: string;
+    exitPrice: string;
+    journal: string;
     journalId: string;
+    market: string;
+    outcome: string;
+    quantity: string;
+    quoteInstrument: string;
+    stopLoss: string;
+    strategy: string;
+    takeProfit: string;
+    timeClosed: Date;
+    timeExecuted: Date;
   };
 };
 
 export const createTrade = ({ data }: CreateTradeDTO): Promise<Trade> => {
-  return axios.post('/trades', data);
+  return axios.post('/trade/', data);
 };
 
 type UseCreateTradeOptions = {
-  journalId: string;
   config?: MutationConfig<typeof createTrade>;
 };
 
-export const useCreateTrade = ({ config, journalId }: UseCreateTradeOptions) => {
+export const useCreateTrade = ({ config }: UseCreateTradeOptions = {}) => {
   const { addNotification } = useNotificationStore();
 
   return useMutation({
     onMutate: async (newTrade) => {
-      await queryClient.cancelQueries(['trades', journalId]);
+      await queryClient.cancelQueries(['trades']);
 
-      const previousTrades = queryClient.getQueryData<Trade[]>(['trades', journalId]);
+      const previousTrades = queryClient.getQueryData<Trade[]>(['trades']);
 
-      queryClient.setQueryData(['trades', journalId], [...(previousTrades || []), newTrade.data]);
+      queryClient.setQueryData(['trades'], [...(previousTrades || []), newTrade.data]);
 
       return { previousTrades };
     },
     onError: (_, __, context: any) => {
       if (context?.previousTrades) {
-        queryClient.setQueryData(['trades', journalId], context.previousTrades);
+        queryClient.setQueryData(['trades'], context.previousTrades);
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['trades', journalId]);
+      queryClient.invalidateQueries(['trades']);
       addNotification({
         type: 'success',
         title: 'Trade Created',

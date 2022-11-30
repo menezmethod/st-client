@@ -3,12 +3,12 @@ import * as z from 'zod';
 
 import { Button } from '@/components/Elements';
 import { Form, FormDrawer, InputField, TextAreaField } from '@/components/Form';
+import { DatePicker } from '@/components/Form/DatePicker';
+import { Hidden } from '@/components/Form/Hidden';
+import { useAuth } from '@/lib/auth';
 import { Authorization, ROLES } from '@/lib/authorization';
 
 import { CreateJournalDTO, useCreateJournal } from '../api/createJournal';
-import { DatePicker } from '@/components/Form/DatePicker';
-import { useAuth } from '@/lib/auth';
-import { Hidden } from '@/components/Form/Hidden';
 
 const schema = z.object({
   name: z.string().min(1, 'Required'),
@@ -39,7 +39,7 @@ export const CreateJournal = () => {
             size="sm"
             isLoading={createJournalMutation.isLoading}
           >
-            Submit
+            Create Journal
           </Button>
         }
       >
